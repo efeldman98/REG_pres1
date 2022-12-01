@@ -13,3 +13,9 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 ```
 
+```{r}
+income_df <- read_csv("../data/data-clean.csv")
+head(income_df)
+nrow(income_df)
+```
+
