@@ -1,0 +1,15 @@
+---
+title: "pres_1"
+author: "Ethan Feldman"
+date: "2022-12-01"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+```
+
