@@ -9,13 +9,59 @@ output: pdf_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+# Libraries 
+
 ```{r}
 library(tidyverse)
 ```
+
+# Reading in the raw data 
 
 ```{r}
 income_df <- read_csv("../data/data-clean.csv")
 head(income_df)
 nrow(income_df)
+colnames(income_df)
+```
+
+# EDA on raw data
+## graphs 
+```{r}
+ggplot(data = income_df, mapping = aes(x = hours.week))+
+  geom_histogram()
+
+ggplot(data = income_df, mapping = aes(x = sex))+
+  geom_bar()
+
+ggplot(data = income_df, mapping = aes(x = education))+
+  geom_bar()+
+  coord_flip()
+
+ggplot(data = income_df, mapping = aes(x = total.person.earnings))+
+  geom_histogram()
+
+ggplot(data = income_df, mapping = aes(x = full_time_labor_force))+
+  geom_bar()
+
+ggplot(data = income_df, mapping = aes(x = health.status))+
+  geom_bar()
+
+ggplot(data = income_df, mapping = aes(x = race))+
+  geom_bar()+
+  coord_flip()
+
+ggplot(data = income_df, mapping = aes(x = industry))+
+  geom_bar()+
+  coord_flip()
+```
+
+
+
+
+
+# numerical summaries 
+
+```{r}
+
 ```
 
