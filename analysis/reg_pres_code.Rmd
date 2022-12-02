@@ -140,13 +140,18 @@ income_IQR$education <- fct_collapse(income_IQR$education,
 levels(income_IQR$education)
 levels(income_IQR$race)
 
-
+head(income_IQR)
 
 ```
 
+# DATA VIS on transformed/filtered dataset
+```{r}
+ggplot(data = income_IQR, mapping = aes(x = earningslog))+
+  geom_histogram()
+```
 
 ```{r}
-step(model1, earningslog ~ race + education + industry + sex, direction = "both")
+step(model1, earningslog ~ race + education + industry + sex + health.status + census.region + occupation + race*education + race*sex + race*industry + sex*education + sex*industry, direction = "both")
 ```
 
 
@@ -185,6 +190,7 @@ Model Coefficients:
 ```{r}
 lm(earningslog ~ race + industry, data = income_IQR) -> model2
 broom::tidy(model2$coefficients) 
+broom::glance(model2)
 ```
 
 Significant Model Coefficients (at alpha = .05):
@@ -209,13 +215,24 @@ plot(model2)
 ```{r}
 lm(earningslog ~ race + industry + sex, data = income_IQR) -> model3
 broom::tidy(model3)
+broom::glance(model3)
 summary(model3)
 plot(model3)
 ```
+
 ```{r}
 lm(earningslog ~ sex + race + industry + education, data = income_IQR) -> model4
 broom::tidy(model4)
+broom::glance(model4)
 summary(model4)
 plot(model4)
+```
+```{r}
+lm(formula = earningslog ~ race + occupation + education + industry + 
+    sex + health.status + census.region + education:sex + industry:sex + 
+    race:sex + hours.week, data = income_IQR) -> model5
+broom::tidy(model5)
+broom::glance(model5)
+plot(model5)
 ```
 
