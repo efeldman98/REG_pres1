@@ -117,6 +117,29 @@ income_df_logged$education <- fct_collapse(income_df_logged$education,
 
 levels(income_df_logged$education)
 
+
+income_df_logged$race <- as_factor(income_df_logged$race)
+
+levels(income_df_logged$race)
+
+income_df_logged$race <- fct_collapse(income_df_logged$race,
+                                      White = "White only",
+                                      Black = "Black only",
+                  American_native = "American Indian, Alaskan Native only (AI)",
+                  Asian = "Asian only",
+                  HI_PI = "Hawaiian/Pacific Islander only (HP)",
+                  multi_racial = c("White-Black", "Black-AI", "White-AI",
+                                   "White-Asian", "White-Black-AI-Asian",
+                                   "White-Black-Asian", "AI-Asian",
+                                   "White-Asian-HP", "White-Black-AI", 
+                                   "White-AI-Asian", "Black-Asian", 
+                                   "White-AI-Asian-HP", "Black-AI-Asian",
+                                   "White-Black-HP", "Asian-HP", "Black-HP",
+                                   "White-AI-HP", "AI-HP", "Other 4 or 5 race comb.",
+                                   "Other 3 race comb."))
+
+levels(income_df_logged$race)
+
 income_df_logged %>% 
   filter(total.person.earnings > 32000) %>%
   filter(total.person.earnings < 83000) -> income_IQR
