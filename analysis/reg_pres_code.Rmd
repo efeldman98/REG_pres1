@@ -1,6 +1,6 @@
 ---
-title: "pres_1"
-author: "Ethan Feldman"
+title: "Data Cleaning & EDA"
+author: "Ethan Feldman, Michael Lewis"
 date: "2022-12-01"
 output: pdf_document
 ---
@@ -9,13 +9,15 @@ output: pdf_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# Libraries 
+# Libraries
 
-```{r}
+```{r, include=FALSE}
 library(tidyverse)
+library(MASS)
+library(car)
 ```
 
-# Reading in the raw data 
+# Reading In the Raw Data
 
 ```{r}
 income_df <- read_csv("../data/data-clean.csv")
@@ -25,7 +27,9 @@ colnames(income_df)
 ```
 
 # EDA on raw data
-## graphs 
+
+## Graphs
+
 ```{r}
 ggplot(data = income_df, mapping = aes(x = hours.week))+
   geom_histogram()
@@ -55,13 +59,54 @@ ggplot(data = income_df, mapping = aes(x = industry))+
   coord_flip()
 ```
 
-
-
-
-
-# numerical summaries 
+# Numerical Summaries
 
 ```{r}
 
 ```
 
+# Data Cleaning & Transformations
+
+## Logging earnings
+
+Because the response data (earnings) is skewed, we log the data to make it more normal.
+
+```{r}
+income_df %>% 
+  mutate(earningslog = log(total.person.earnings)) %>%
+  filter(earningslog != "-Inf") %>% #removing undefined results
+  filter(earningslog != "Inf") %>% #removing undefined results
+  filter(!is.nan(earningslog)) -> income_df_logged #removing anything else 
+
+ggplot(data = income_df_logged, mapping = aes(x = earningslog))+
+  geom_histogram(bins = 25) #data looks more normal / unimodal 
+
+```
+
+## Filtering down to the IQR
+
+Our project is aimed at understanding the average American's income. As a result, we filtered our dataset down to the middle 50% of individuals.
+
+```{r}
+summary(income_df_logged$total.person.earnings)
+
+#lower threshold 32000
+#upper threshold 83000
+
+income_df_logged %>% 
+  filter(total.person.earnings > 32000) %>%
+  filter(total.person.earnings < 83000) -> income_IQR
+head(income_IQR)
+```
+
+## Removing kids
+
+Individuals with less than a HS graduation are generally not representative of the population. Therefore, we removed them from the sample.
+
+```{r}
+drops <- c("Children", "7th and 8th grade", "5th or 6th grade", "10th grade", "1st,2nd,3rd,or 4th grade", 
+"Less than 1st grade", "11th grade", "9th grade") 
+income_IQR %>% 
+  filter(!education %in% drops) -> income_final
+head(income_final)
+```
