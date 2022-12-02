@@ -24,6 +24,8 @@ income_df <- read_csv("../data/data-clean.csv")
 head(income_df)
 nrow(income_df)
 colnames(income_df)
+
+mutate(income_df, race = as_factor(race)) -> income_df
 ```
 
 # EDA on raw data
@@ -118,4 +120,10 @@ income_df_logged %>%
 head(income_IQR)
 ```
 
-## 
+## Model 1: Log Earnings = 𝛃0 + 𝛃1\*Race
+
+```{r}
+lm(earningslog ~ race, data = income_IQR) -> model1
+summary(model1)
+  
+```
