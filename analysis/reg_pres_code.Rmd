@@ -125,5 +125,7 @@ head(income_IQR)
 ```{r}
 lm(earningslog ~ race, data = income_IQR) -> model1
 summary(model1)
+anova(model1)
+plot(model1)
   
 ```
