@@ -122,10 +122,28 @@ head(income_IQR)
 
 ## Model 1: Log Earnings = 𝛃0 + 𝛃1\*Race
 
+Model Coefficients:
+
 ```{r}
 lm(earningslog ~ race, data = income_IQR) -> model1
-summary(model1)
-anova(model1)
-plot(model1)
-  
+broom::tidy(model1$coefficients) 
+```
+
+Significant Model Coefficients (at alpha = .05):
+
+```{r}
+broom::tidy(summary(model1)) %>% filter(p.value < .05)
+```
+
+ANOVA Table
+
+```{r}
+broom::tidy(anova(model1))
+```
+
+```{r}
+plot(model1) #include first two plots
+
+#generally normal notwithstanding deviations at tail ends
+#residuals -- NCV
 ```
