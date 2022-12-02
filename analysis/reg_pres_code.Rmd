@@ -147,3 +147,31 @@ plot(model1) #include first two plots
 #generally normal notwithstanding deviations at tail ends
 #residuals -- NCV
 ```
+
+## Model 2: Log Earnings = 𝛃0 + 𝛃1\*Race + 𝛃2\*Industry
+
+Model Coefficients:
+
+```{r}
+lm(earningslog ~ race + industry, data = income_IQR) -> model2
+broom::tidy(model2$coefficients) 
+```
+
+Significant Model Coefficients (at alpha = .05):
+
+```{r}
+broom::tidy(summary(model2)) %>% filter(p.value < .05)
+```
+
+ANOVA Table
+
+```{r}
+broom::tidy(anova(model2))
+```
+
+```{r}
+plot(model2)
+#definitely should remove case on far right and far left
+#residuals appear to be slightly downward sloping but are generally within -.6 and .6. Variance is relatively constant. 
+#Again, normal except for tail ends in theoretical quantiles below -1.5 and 1.5
+```
