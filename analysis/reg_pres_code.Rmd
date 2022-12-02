@@ -26,6 +26,9 @@ nrow(income_df)
 colnames(income_df)
 
 mutate(income_df, race = as_factor(race)) -> income_df
+mutate(income_df, sex = as_factor(sex)) -> income_df
+mutate(income_df, industry = as_factor(industry)) -> income_df
+mutate(income_df, education = as_factor(education)) -> income_df
 ```
 
 # EDA on raw data
