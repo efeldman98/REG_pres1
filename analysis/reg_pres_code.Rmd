@@ -205,3 +205,17 @@ plot(model2)
 #residuals appear to be slightly downward sloping but are generally within -.6 and .6. Variance is relatively constant. 
 #Again, normal except for tail ends in theoretical quantiles below -1.5 and 1.5
 ```
+
+```{r}
+lm(earningslog ~ race + industry + sex, data = income_IQR) -> model3
+broom::tidy(model3)
+summary(model3)
+plot(model3)
+```
+```{r}
+lm(earningslog ~ sex + race + industry + education, data = income_IQR) -> model4
+broom::tidy(model4)
+summary(model4)
+plot(model4)
+```
+
