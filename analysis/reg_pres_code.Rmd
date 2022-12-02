@@ -93,6 +93,25 @@ summary(income_df_logged$total.person.earnings)
 #lower threshold 32000
 #upper threshold 83000
 
+income_df_logged$education  <- as_factor(income_df_logged$education)
+
+levels(income_df_logged$education)
+
+income_df_logged$education <- fct_collapse(income_df_logged$education,
+          less_than_hs = c("Less than 1st grade", "5th or 6th grade",
+                              "9th grade","1st,2nd,3rd,or 4th grade",
+                              "12th grade no diploma", "10th grade",
+                              "11th grade", "7th and 8th grade"),
+          hs_grad = "High school graduate - high school diploma or equivalent", 
+             col_nd = "Some college but no degree",
+          associates = c("Associate degree in college - occupation/vocation program",
+          "Associate degree in college - academic program"),
+          bsba = "Bachelors degree",
+          advanced = c("Masters degree", "Professional school degree",
+                       "Doctorate degree"))
+
+levels(income_df_logged$education)
+
 income_df_logged %>% 
   filter(total.person.earnings > 32000) %>%
   filter(total.person.earnings < 83000) -> income_IQR
@@ -109,4 +128,6 @@ drops <- c("Children", "7th and 8th grade", "5th or 6th grade", "10th grade", "1
 income_IQR %>% 
   filter(!education %in% drops) -> income_final
 head(income_final)
+
+
 ```
