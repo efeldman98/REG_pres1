@@ -214,25 +214,94 @@ plot(model2)
 
 ```{r}
 lm(earningslog ~ race + industry + sex, data = income_IQR) -> model3
-broom::tidy(model3)
+broom::tidy(model3) %>%
+  filter(p.value < .05)
 broom::glance(model3)
 summary(model3)
 plot(model3)
+
+conf_est(model3, .05, .95)
 ```
 
 ```{r}
+
+
+
+conf_est <- function(lmo, sig, lvl){
+  broom::tidy(lmo) %>%
+    filter(p.value < sig) -> df_sig
+  broom::tidy(lmo) -> df_all
+  anti_join(df_all, df_sig, by = "term")
+  cbind(names(lmo$coefficients), as_tibble(confint(lmo), level = lvl)) ->lmo_conf
+  names(lmo_conf)[1] <- "term"
+  semi_join(lmo_conf, df_sig) -> df_conf
+  return(df_conf)
+}
+
 lm(earningslog ~ sex + race + industry + education, data = income_IQR) -> model4
-broom::tidy(model4)
+
+conf_est(model4, .05, .95)
+
 broom::glance(model4)
 summary(model4)
 plot(model4)
 ```
+
+```{r}
+
+conf_est(model4.1, .05, .95) 
+
+lm(earningslog ~ sex + race + industry + education + census.region, data = income_IQR) -> model4.1
+
+broom::tidy(model4.1) %>%
+  filter(p.value < .05) -> m4.1sig_a.1
+
+broom::tidy(model4.1) -> m4_allp
+
+anti_join(m4_allp, m4.1sig_a.1)
+
+cbind(names(model4.1$coefficients), as_tibble(confint(model4.1, level = .95))) -> m4_conf
+
+names(m4_conf)[1] <- "term"
+
+semi_join(m4_conf, m4.1sig_a.1) -> test1
+
+
+
+broom::glance(model4.1)
+#summary(model4.1)
+plot(model4.1)
+
+ggplot(data = model4.1, mapping = aes(x = model4.1$residuals))+
+  geom_histogram()
+```
+
 ```{r}
 lm(formula = earningslog ~ race + occupation + education + industry + 
     sex + health.status + census.region + education:sex + industry:sex + 
     race:sex + hours.week, data = income_IQR) -> model5
-broom::tidy(model5)
+broom::tidy(model5) %>%
+  filter(p.value < .05) -> m5_sig_a.1
+
+broom::tidy(model5) -> m5_allp
+
+anti_join(m5_allp, m5_sig_a.1)
+
+
+
+cbind(names(model5$coefficients), as_tibble(confint(model5,level = .95))) -> m5_conf
+
+names(m5_conf)[1] <- "term"
+m5_conf
+
+semi_join(m5_conf, m5_sig_a.1)
+
 broom::glance(model5)
 plot(model5)
+
+conf_est(model5, .05, .95)
+
+ggplot(data = model5, mapping = aes(x = model5$residuals))+
+  geom_histogram()
 ```
 
