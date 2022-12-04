@@ -107,6 +107,7 @@ income_IQR$race  <- as_factor(income_IQR$race)
 income_IQR$education  <- as_factor(income_IQR$education)
 income_IQR$industry  <- as_factor(income_IQR$industry)
 income_IQR$sex <- as_factor(income_IQR$sex)
+income_IQR$census.region <- as_factor(income_IQR$census.region)
 
 income_IQR$race <- fct_collapse(income_IQR$race,
                                       White = "White only",
@@ -220,14 +221,14 @@ broom::glance(model3)
 summary(model3)
 plot(model3)
 
-conf_est(model3, .05, .95)
+conf_esti(model3, .05, .95)
 ```
 
 ```{r}
 
 
 
-conf_est <- function(lmo, sig, lvl){
+conf_esti <- function(lmo, sig, lvl){
   broom::tidy(lmo) %>%
     filter(p.value < sig) -> df_sig
   broom::tidy(lmo) -> df_all
@@ -240,7 +241,7 @@ conf_est <- function(lmo, sig, lvl){
 
 lm(earningslog ~ sex + race + industry + education, data = income_IQR) -> model4
 
-conf_est(model4, .05, .95)
+conf_esti(model4, .05, .95)
 
 broom::glance(model4)
 summary(model4)
@@ -249,9 +250,11 @@ plot(model4)
 
 ```{r}
 
-conf_est(model4.1, .05, .95) 
+conf_esti(model4.1, .05, .95) 
 
 lm(earningslog ~ sex + race + industry + education + census.region, data = income_IQR) -> model4.1
+
+summary(model4.1)
 
 broom::tidy(model4.1) %>%
   filter(p.value < .05) -> m4.1sig_a.1
@@ -274,6 +277,61 @@ plot(model4.1)
 
 ggplot(data = model4.1, mapping = aes(x = model4.1$residuals))+
   geom_histogram()
+
+res4.1 <- as_tibble(model4.1$residuals)
+
+res4.1 <- res4.1 %>%
+  mutate(
+    row = row_number()
+  )
+
+
+ggplot(data = res4.1, mapping = aes(x = row, y= value))+
+  geom_point()
+
+durbinWatsonTest(model4.1, max.lag = 8)
+ks.test(model4.1$residuals, "pnorm")
+sample(model4.1$residuals, 100) -> ressamp
+names(ressamp) -> vec2
+
+as_tibble(ressamp) -> ressamp
+
+ressamp %>%
+  mutate(obs_num = vec2) -> ressamp
+
+
+
+ggplot(data = ressamp, mapping = aes(x = obs_num, y= value))+
+  geom_point()
+
+shapiro.test(ressamp$value)
+
+durbinWatsonTest(ressamp$value)
+
+influence.measures(model4.1) -> infm_4.1
+
+summary(infm_4.1) -> z
+
+names(z[,1]) -> infl
+
+infl <- as_tibble(infl)
+
+infl %>%
+  rename(row = value) %>%
+  mutate(row = parse_number(row)) -> infl
+
+income_IQR %>%
+  mutate(
+    row = row_number()
+  ) -> income_IQR
+
+anti_join(income_IQR, infl, by = "row") -> df_reduced
+
+lm(earningslog ~ sex + race + industry + education + census.region , data = df_reduced) -> model4.1a
+
+plot(model4.1a)
+
+
 ```
 
 ```{r}
@@ -299,7 +357,7 @@ semi_join(m5_conf, m5_sig_a.1)
 broom::glance(model5)
 plot(model5)
 
-conf_est(model5, .05, .95)
+conf_esti(model5, .05, .95)
 
 ggplot(data = model5, mapping = aes(x = model5$residuals))+
   geom_histogram()
